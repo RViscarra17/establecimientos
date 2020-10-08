@@ -63847,6 +63847,8 @@ var app = new Vue({
 
 __webpack_require__(/*! ./mapa */ "./resources/js/mapa.js");
 
+__webpack_require__(/*! ./dropzone */ "./resources/js/dropzone.js");
+
 /***/ }),
 
 /***/ "./resources/js/bootstrap.js":
@@ -63963,6 +63965,56 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/dropzone.js":
+/*!**********************************!*\
+  !*** ./resources/js/dropzone.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _require = __webpack_require__(/*! axios */ "./node_modules/axios/index.js"),
+    Axios = _require["default"];
+
+var _require2 = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"),
+    param = _require2.param;
+
+document.addEventListener('DOMContentLoaded', function () {
+  if (document.querySelector('#dropzone')) {
+    Dropzone.autoDiscover = false;
+    var dropzone = new Dropzone('div#dropzone', {
+      url: '/imagenes/store',
+      dictDefaultMessage: 'Sube hasta 10 imagenes',
+      maxFiles: 10,
+      required: true,
+      acceptedFiles: ".png, .jpg, .gif, .bmp, .jpeg",
+      addRemoveLinks: true,
+      dictRemoveFile: 'Eliminar imagen',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+      },
+      success: function success(file, respuesta) {
+        console.log(respuesta);
+        file.nombreServidor = respuesta.archivo;
+      },
+      sending: function sending(file, xhr, formData) {
+        formData.append('uuid', document.querySelector('#uuid').value); //console.log('enviando');
+      },
+      removedfile: function removedfile(file, respuesta) {
+        // console.log(file);
+        var params = {
+          imagen: file.nombreServidor
+        };
+        axios.post('/imagenes/destroy', params).then(function (respuesta) {
+          console.log(respuesta);
+          file.previewElement.parentNode.removeChild(file.previewElement);
+        });
+      }
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/mapa.js":
 /*!******************************!*\
   !*** ./resources/js/mapa.js ***!
@@ -64033,8 +64085,8 @@ document.addEventListener('DOMContentLoaded', function () {
       document.querySelector('#lng').value = resultado.latlng.lng || '';
     };
 
-    var lat = 20.666332695977;
-    var lng = -103.392177745699;
+    var lat = document.querySelector('#lat').value === '' ? 20.666332695977 : document.querySelector('#lat').value;
+    var lng = document.querySelector('#lng').value === '' ? -103.392177745699 : document.querySelector('#lng').value;
     var mapa = L.map('mapa').setView([lat, lng], 16); // Eliminar pines anteriores
 
     var markers = new L.FeatureGroup().addTo(mapa);

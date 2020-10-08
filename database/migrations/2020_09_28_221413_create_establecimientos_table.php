@@ -24,7 +24,7 @@ class CreateEstablecimientosTable extends Migration
             $table->id();
             $table->string('nombre');
             $table->foreignId('categoria_id')->constrained();
-            $table->string('imagen_principa;');
+            $table->string('imagen_principal');
             $table->string('direccion');
             $table->string('colonia');
             $table->string('lat');
