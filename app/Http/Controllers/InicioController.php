@@ -15,6 +15,6 @@ class InicioController extends Controller
     public function __invoke(Request $request)
     {
         //
-        return "desde incioController";
+        return view('inicio.index');
     }
 }
